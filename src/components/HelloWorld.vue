@@ -3,12 +3,10 @@
     <v-row class="text-center">
       <v-col class="mb-4 mt-4">
         <h1 class="display-2 font-weight-bold mb-3">
-          Post-Quantum DNSSEC with FALCON-512 and PowerDNS
+          Post-Quantum DNSSEC Testbed with FALCON-512 and PowerDNS
         </h1>
       </v-col>
     </v-row>
-
-
 
     <v-row>
       <v-col
@@ -51,28 +49,36 @@
             filled
             label="Query type"
             type="text"
-          ></v-text-field>
+          />
           <v-text-field
             v-model="qname"
-            append-outer-icon="mdi-send"
+            append-icon="mdi-send"
             filled
             clear-icon="mdi-close-circle"
             clearable
             label="Enter a domain name"
             type="text"
-            @click:append-outer="query"
-          ></v-text-field>
+            @click:append="query"
+          />
         </v-row>
         <v-row v-if="working">
           <v-col>
-            <div class="text-center"><v-progress-circular indeterminate color="primary"></v-progress-circular></div>
+            <div class="text-center">
+              <v-progress-circular
+                indeterminate
+                color="primary"
+              />
+            </div>
           </v-col>
         </v-row>
         <v-row v-if="err">
-          <v-alert>{{err}}</v-alert>
+          <v-alert>{{ err }}</v-alert>
         </v-row>
         <v-row v-if="!working && r_text">
-          <code style="overflow: hidden"><span v-for="(l, index) in r_text" v-bind:key="index">{{l}}<br/></span></code>
+          <code style="overflow: hidden"><span
+            v-for="(l, index) in r_text"
+            :key="index"
+          >{{ l }}<br></span></code>
         </v-row>
       </v-col>
     </v-row>
@@ -88,7 +94,7 @@ import {RECURSION_DESIRED} from 'dns-packet'
 
     data: () => ({
       qtype: 'TXT',
-      qname: 'falcon.example.pq-dnssec.dedyn.io',
+      qname: 'falcon512.pdns.pq-dnssec.dedyn.io',
       q: '',
       r_text: [],
       working: false,
@@ -113,7 +119,7 @@ import {RECURSION_DESIRED} from 'dns-packet'
               flags: 1 << 15, // DNSSEC_OK
             }]
         }
-        sendDohMsg(this.q, 'https://pq-dnssec.dedyn.io/dns-query', 'GET', [], 1500)
+        sendDohMsg(this.q, 'https://pdns.pq-dnssec.dedyn.io/dns-query', 'GET', [], 1500)
           .then(r => {this.digest(r); this.working = false;})
           .catch(err => {this.err = err; this.working = false;})
       },

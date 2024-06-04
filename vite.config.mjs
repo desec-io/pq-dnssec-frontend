@@ -7,6 +7,7 @@ import ViteFonts from 'unplugin-fonts/vite'
 // Utilities
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -24,6 +25,10 @@ export default defineConfig({
           styles: 'wght@100;300;400;500;700;900',
         }],
       },
+    }),
+    nodePolyfills({
+      // To add only specific polyfills, add them here. If no option is passed, adds all polyfills
+      include: ['http', 'https', 'util'],
     }),
   ],
   define: { 'process.env': {} },
