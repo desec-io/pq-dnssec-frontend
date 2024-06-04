@@ -1,157 +1,194 @@
 <template>
-  <v-container class="fill-height">
-    <v-responsive
-      class="align-centerfill-height mx-auto"
-      max-width="900"
-    >
-      <v-img
-        class="mb-4"
-        height="150"
-        src="@/assets/logo.png"
-      />
+  <v-container>
+    <v-row class="text-center">
+      <v-col class="mb-4 mt-4">
+        <h1 class="display-2 font-weight-bold mb-3">
+          Post-Quantum DNSSEC with FALCON-512 and PowerDNS
+        </h1>
+      </v-col>
+    </v-row>
 
-      <div class="text-center">
-        <div class="text-body-2 font-weight-light mb-n1">Welcome to</div>
 
-        <h1 class="text-h2 font-weight-bold">Vuetify</h1>
-      </div>
 
-      <div class="py-4" />
-
-      <v-row>
-        <v-col cols="12">
-          <v-card
-            class="py-4"
-            color="surface-variant"
-            image="https://cdn.vuetifyjs.com/docs/images/one/create/feature.png"
-            prepend-icon="mdi-rocket-launch-outline"
-            rounded="lg"
-            variant="outlined"
-          >
-            <template #image>
-              <v-img position="top right" />
-            </template>
-
-            <template #title>
-              <h2 class="text-h5 font-weight-bold">Get started</h2>
-            </template>
-
-            <template #subtitle>
-              <div class="text-subtitle-1">
-                Change this page by updating <v-kbd>{{ `<HelloWorld />` }}</v-kbd> in <v-kbd>components/HelloWorld.vue</v-kbd>.
-              </div>
-            </template>
-
-            <v-overlay
-              opacity=".12"
-              scrim="primary"
-              contained
-              model-value
-              persistent
-            />
-          </v-card>
-        </v-col>
-
-        <v-col cols="6">
-          <v-card
-            append-icon="mdi-open-in-new"
-            class="py-4"
-            color="surface-variant"
-            href="https://vuetifyjs.com/"
-            prepend-icon="mdi-text-box-outline"
-            rel="noopener noreferrer"
-            rounded="lg"
-            subtitle="Learn about all things Vuetify in our documentation."
+    <v-row>
+      <v-col
+        class="mb-5"
+        cols="12"
+      >
+        <h2 class="headline font-weight-bold mb-3">
+          Make a query to our resolver
+        </h2>
+        <p class="subheading font-weight-regular">
+          Send queries to our post-quantum enabled verifying resolver!
+          To obtain responses signed with FALCON-512, query <code>A</code>, <code>AAAA</code>, and <code>TXT</code>
+          records at <code>falcon.example.pq-dnssec.dedyn.io.</code> and <code>*.falcon.example.pq-dnssec.dedyn.io.</code>.
+          To get classical signatures, try <code>rsasha256.example.pq-dnssec.dedyn.io.</code>,
+          <code>ecdsa256.example.pq-dnssec.dedyn.io.</code>, <code>ed25519.example.pq-dnssec.dedyn.io.</code>, and the like.
+        </p>
+        <p class="subheading font-weight-regular">
+          Queries will be sent from your browser using DNS-over-HTTPS to a PowerDNS recursor with FALCON-512 support.
+          The recursor will query our PowerDNS authoritative DNS server (again, with FALCON-512 support), to get your
+          reponse.
+          The recursor will then validate the signature and send the result to your browser.
+          All queries are send with the <code>DNSSEC_OK</code> flag (<code>+dnssec</code> in dig), so you will see
+          <code>RRSIG</code> and <code>NSEC</code>/<code>NSEC3</code> records the the responses.
+        </p>
+        <p>
+          For more information, please check out the code at
+          <a
+            href="https://github.com/nils-wisiol/dns-falcon"
             target="_blank"
-            title="Documentation"
-            variant="text"
-          >
-            <v-overlay
-              opacity=".06"
-              scrim="primary"
-              contained
-              model-value
-              persistent
-            />
-          </v-card>
-        </v-col>
+          >GitHub</a>.
+        </p>
+      </v-col>
+    </v-row>
 
-        <v-col cols="6">
-          <v-card
-            append-icon="mdi-open-in-new"
-            class="py-4"
-            color="surface-variant"
-            href="https://vuetifyjs.com/introduction/why-vuetify/#feature-guides"
-            prepend-icon="mdi-star-circle-outline"
-            rel="noopener noreferrer"
-            rounded="lg"
-            subtitle="Explore available framework Features."
-            target="_blank"
-            title="Features"
-            variant="text"
-          >
-            <v-overlay
-              opacity=".06"
-              scrim="primary"
-              contained
-              model-value
-              persistent
-            />
-          </v-card>
-        </v-col>
-
-        <v-col cols="6">
-          <v-card
-            append-icon="mdi-open-in-new"
-            class="py-4"
-            color="surface-variant"
-            href="https://vuetifyjs.com/components/all"
-            prepend-icon="mdi-widgets-outline"
-            rel="noopener noreferrer"
-            rounded="lg"
-            subtitle="Discover components in the API Explorer."
-            target="_blank"
-            title="Components"
-            variant="text"
-          >
-            <v-overlay
-              opacity=".06"
-              scrim="primary"
-              contained
-              model-value
-              persistent
-            />
-          </v-card>
-        </v-col>
-
-        <v-col cols="6">
-          <v-card
-            append-icon="mdi-open-in-new"
-            class="py-4"
-            color="surface-variant"
-            href="https://discord.vuetifyjs.com"
-            prepend-icon="mdi-account-group-outline"
-            rel="noopener noreferrer"
-            rounded="lg"
-            subtitle="Connect with Vuetify developers."
-            target="_blank"
-            title="Community"
-            variant="text"
-          >
-            <v-overlay
-              opacity=".06"
-              scrim="primary"
-              contained
-              model-value
-              persistent
-            />
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-responsive>
+    <v-row>
+      <v-col>
+        <v-row>
+          <v-text-field
+            v-model="qtype"
+            filled
+            label="Query type"
+            type="text"
+          ></v-text-field>
+          <v-text-field
+            v-model="qname"
+            append-outer-icon="mdi-send"
+            filled
+            clear-icon="mdi-close-circle"
+            clearable
+            label="Enter a domain name"
+            type="text"
+            @click:append-outer="query"
+          ></v-text-field>
+        </v-row>
+        <v-row v-if="working">
+          <v-col>
+            <div class="text-center"><v-progress-circular indeterminate color="primary"></v-progress-circular></div>
+          </v-col>
+        </v-row>
+        <v-row v-if="err">
+          <v-alert>{{err}}</v-alert>
+        </v-row>
+        <v-row v-if="!working && r_text">
+          <code style="overflow: hidden"><span v-for="(l, index) in r_text" v-bind:key="index">{{l}}<br/></span></code>
+        </v-row>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
-<script setup>
-  //
+<script>
+import {sendDohMsg} from 'dohjs'
+import {RECURSION_DESIRED} from 'dns-packet'
+
+  export default {
+    name: 'HelloWorld',
+
+    data: () => ({
+      qtype: 'TXT',
+      qname: 'falcon.example.pq-dnssec.dedyn.io',
+      q: '',
+      r_text: [],
+      working: false,
+      err: false,
+    }),
+    methods: {
+      query: function () {
+        this.working = true
+        this.err = false
+        this.q = {
+            type: 'query',
+            id: 0,
+            flags: RECURSION_DESIRED,
+            questions: [{
+              type: this.qtype,
+              name: this.qname,
+            }],
+            additionals: [{
+              type: 'OPT',
+              name: '.',
+              udpPayloadSize: 4096,
+              flags: 1 << 15, // DNSSEC_OK
+            }]
+        }
+        sendDohMsg(this.q, 'https://pq-dnssec.dedyn.io/dns-query', 'GET', [], 1500)
+          .then(r => {this.digest(r); this.working = false;})
+          .catch(err => {this.err = err; this.working = false;})
+      },
+      digest: function (r) {
+        this.r_text = []
+        // this.r_text.push(r)
+
+        // Header:
+        // ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 25078
+        // ;; flags: qr rd ra; QUERY: 1, ANSWER: 2, AUTHORITY: 2, ADDITIONAL: 1
+        this.r_text.push(`;; ->>HEADER<<- opcode: ${r.opcode}, status: ${r.rcode}, id: ${r.id}`)
+        let flags = []
+        if (r.flag_qr) flags.push('qr')
+        if (r.flag_aa) flags.push('aa')
+        if (r.flag_tc) flags.push('tc')
+        if (r.flag_rd) flags.push('rd')
+        if (r.flag_ra) flags.push('ra')
+        if (r.flag_z) flags.push('z')
+        if (r.flag_ad) flags.push('ad')
+        if (r.flag_cd) flags.push('cd')
+        this.r_text.push(`;; flags: ${flags.join(' ')}; QUERY: ${r.questions.length}, ANSWER: ${r.answers.length}, AUTHORITY: ${r.authorities.length}, ADDITIONAL: ${r.additionals.length}`)
+        this.r_text.push('')
+
+        // Question
+        this.r_text.push(';; QUESTION SECTION:')
+        this.r_text.push(...this.render_section(r.questions))
+        this.r_text.push('')
+
+        // Answer
+        this.r_text.push(';; ANSWER SECTION:')
+        this.r_text.push(...this.render_section(r.answers))
+        this.r_text.push('')
+
+        // Authority
+        if (r.authorities.length) {
+          this.r_text.push(';; AUTHORITY SECTION:')
+          this.r_text.push(...this.render_section(r.authorities))
+          this.r_text.push('')
+        }
+      },
+      render_section(s) {
+        let full_section = []
+        s.forEach((rrset) => {
+          let full_rrset_txt = ''
+          if (rrset.data) {
+            full_rrset_txt = `${rrset.name} ${rrset.ttl} ${rrset.class} ${rrset.type} `
+            if (rrset.type == 'RRSIG')
+              full_rrset_txt += (
+                  `${rrset.data.typeCovered} ${rrset.data.algorithm} ${rrset.data.labels} ${rrset.data.originalTTL} ` +
+                  `${rrset.data.inception} ${rrset.data.expiration} ${rrset.data.keyTag} ${rrset.data.signersName} ` +
+                  `${rrset.data.signature.toString('base64')}`
+              )
+            else if (rrset.type == 'TXT') {
+              rrset.data.forEach((rr) => {
+                full_rrset_txt += `"${rr.toString()}" `
+              })
+            } else if (rrset.type == 'A' || rrset.type == 'AAAA') {
+              full_rrset_txt += rrset.data
+            } else if (rrset.type == 'SOA') {
+              // { "name": "falcon3.example", "type": "SOA", "ttl": 3600, "class": "IN", "flush": false,
+              // "data": { "mname": "a.misconfigured.dns.server.invalid", "rname": "hostmaster.falcon3.example", "serial": 0, "refresh": 10800, "retry": 3600, "expire": 604800, "minimum": 3600 } }
+              // a.misconfigured.dns.server.invalid. hostmaster.falcon.example.pq-dnssec.dedyn.io. 0 10800 3600 604800 3600
+              full_rrset_txt += `${rrset.data.mname} ${rrset.data.rname} ${rrset.data.serial} ${rrset.data.refresh} ${rrset.data.retry} ${rrset.data.expire} ${rrset.data.minimum}`
+            } else if (rrset.type == 'NSEC' || rrset.type == 'NSEC3') {
+              full_rrset_txt += `${rrset.data.nextDomain} ${rrset.data.rrtypes.join(' ')}`
+            } else {
+              full_rrset_txt = rrset
+            }
+          } else {
+            full_rrset_txt = `${rrset.name} ${rrset.class} ${rrset.type}`
+          }
+          full_section.push(full_rrset_txt)
+        })
+        return full_section
+      }
+    },
+  }
 </script>
