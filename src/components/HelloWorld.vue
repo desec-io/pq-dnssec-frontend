@@ -3,7 +3,7 @@
     <v-row class="text-center">
       <v-col class="mb-4 mt-4">
         <h1 class="display-2 font-weight-bold mb-3">
-          Post-Quantum DNSSEC Testbed with FALCON-512 and PowerDNS
+          Post-Quantum DNSSEC Testbed with BIND and PowerDNS
         </h1>
       </v-col>
     </v-row>
@@ -14,29 +14,28 @@
         cols="12"
       >
         <h2 class="headline font-weight-bold mb-3">
-          Make a query to our resolver
+          Query our PQC-enabled DNS Resolvers
         </h2>
-        <p class="subheading font-weight-regular">
-          Send queries to our post-quantum enabled verifying resolver!
-          To obtain responses signed with FALCON-512, query <code>A</code>, <code>AAAA</code>, and <code>TXT</code>
-          records at <code>falcon.example.pq-dnssec.dedyn.io.</code> and <code>*.falcon.example.pq-dnssec.dedyn.io.</code>.
-          To get classical signatures, try <code>rsasha256.example.pq-dnssec.dedyn.io.</code>,
-          <code>ecdsa256.example.pq-dnssec.dedyn.io.</code>, <code>ed25519.example.pq-dnssec.dedyn.io.</code>, and the like.
-        </p>
-        <p class="subheading font-weight-regular">
-          Queries will be sent from your browser using DNS-over-HTTPS to a PowerDNS recursor with FALCON-512 support.
-          The recursor will query our PowerDNS authoritative DNS server (again, with FALCON-512 support), to get your
-          reponse.
-          The recursor will then validate the signature and send the result to your browser.
-          All queries are send with the <code>DNSSEC_OK</code> flag (<code>+dnssec</code> in dig), so you will see
-          <code>RRSIG</code> and <code>NSEC</code>/<code>NSEC3</code> records the the responses.
+        <p>
+          Send queries to our post-quantum enabled validating resolver!
+          You can choose from a number of post-quantum (and classical) signing schemes, NSEC or NSEC3 mode, and
+          implementations for PowerDNS or BIND.
         </p>
         <p>
-          For more information, please check out the code at
-          <a
-            href="https://github.com/nils-wisiol/dns-falcon"
-            target="_blank"
-          >GitHub</a>.
+          Zones signed accordingly are available at <code>{algorithm}.{vendor}.pq-dnssec.dedyn.io</code>, and each has a
+          <code>A</code> and a <code>TXT</code> record configured.
+          To query a non-existing name, prepend the <code>nx</code> label (for example).
+        </p>
+        <p>
+          Queries will be sent from your browser using DNS-over-HTTPS to a BIND or PowerDNS resolvers with validation
+          support for the selected algorithm.
+          The resolver will talk to the corresponding BIND or PowerDNS authoritative DNS server (again, with support for
+          the selecting signing scheme), to get your response.
+          It will then validate the signature and send the result to your browser.
+        </p>
+        <p>
+          All queries are send with the <code>DNSSEC_OK</code> flag (<code>+dnssec</code> in dig), so you will see
+          <code>RRSIG</code> and <code>NSEC</code>/<code>NSEC3</code> records the the responses.
         </p>
       </v-col>
     </v-row>
@@ -44,22 +43,45 @@
     <v-row>
       <v-col>
         <v-row>
-          <v-text-field
+          <v-combobox
             v-model="qtype"
             filled
             label="Query type"
-            type="text"
+            :items="['TXT', 'A']"
+          />
+          <v-select v-model="algorithm" label="Algorithm" :items="algorithms">
+            <template #item="{ props, item }">
+              <v-list-subheader v-if="props.header">
+                {{ props.header }}
+              </v-list-subheader>
+              <v-divider v-else-if="props.divider" class="mt-2" />
+              <v-list-item v-else v-bind="props"></v-list-item>
+            </template>
+          </v-select>
+          <v-select v-model="vendor" label="vendor" :items="vendors" item-title="name" item-value="value"/>
+        </v-row>
+        <v-row>
+          <v-checkbox
+            v-model="nsec3"
+            label="NSEC3"
+            :readonly="algorithm == 'unsigned'"
+          />
+          <v-checkbox
+            v-model="nx"
+            label="non-existent name"
           />
           <v-text-field
             v-model="qname"
-            append-icon="mdi-send"
             filled
-            clear-icon="mdi-close-circle"
-            clearable
-            label="Enter a domain name"
+            label="Domain name"
+            readonly
             type="text"
-            @click:append="query"
-          />
+            class="ml-2"
+          >
+            <template v-slot:append>
+              <v-icon :disabled="!qtype || !qname" @click="query">mdi-send</v-icon>
+            </template>
+          </v-text-field>
         </v-row>
         <v-row v-if="working">
           <v-col>
@@ -74,8 +96,8 @@
         <v-row v-if="err">
           <v-alert>{{ err }}</v-alert>
         </v-row>
-        <v-row v-if="!working && r_text">
-          <code style="overflow: hidden"><span
+        <v-row v-if="!working && r_text.length">
+          <code style="background: lightgrey; padding: 1em; width: 100%; overflow-wrap: break-word"><span
             v-for="(l, index) in r_text"
             :key="index"
           >{{ l }}<br></span></code>
@@ -88,18 +110,51 @@
 <script>
 import {sendDohMsg} from 'dohjs'
 import {RECURSION_DESIRED} from 'dns-packet'
+import base32 from 'hi-base32'
 
   export default {
     name: 'HelloWorld',
 
     data: () => ({
-      qtype: 'TXT',
-      qname: 'falcon512.pdns.pq-dnssec.dedyn.io',
+      algorithm: 'Falcon512',
+      vendor: ['pdns', 'bind9'][Math.floor(Math.random() * 2)],
+      nx: false,
+      nsec3: false,
+      qtype: null,
       q: '',
       r_text: [],
       working: false,
       err: false,
+      algorithms: [
+        'unsigned',
+        { props: { header: 'Classical' }},
+        'RSASHA256',
+        'ECDSA256',
+        'ED25519',
+        { props: { header: 'Post-quantum' }},
+        'Falcon512',
+        'Dilithium2',
+        'Sphincs-SHA256-128s',
+        'XMSSmt-SHA256-h40-4',
+        'XMSSmt-SHA256-h40-8',
+      ],
+      vendors: [
+        { name: 'BIND', value: 'bind9' },
+        { name: 'PowerDNS', value: 'pdns' },
+      ],
     }),
+    computed: {
+      qname: function () {
+        return `${this.nx ? 'nx.' : ''}${this.algorithm.toLowerCase()}${this.nsec3 ? 3 : ''}.${this.vendor}.pq-dnssec.dedyn.io`;
+      },
+    },
+    watch: {
+      algorithm: function (algo) {
+        if (algo == 'unsigned') {
+          this.nsec3 = false;
+        }
+      }
+    },
     methods: {
       query: function () {
         this.working = true
@@ -183,8 +238,11 @@ import {RECURSION_DESIRED} from 'dns-packet'
               // "data": { "mname": "a.misconfigured.dns.server.invalid", "rname": "hostmaster.falcon3.example", "serial": 0, "refresh": 10800, "retry": 3600, "expire": 604800, "minimum": 3600 } }
               // a.misconfigured.dns.server.invalid. hostmaster.falcon.example.pq-dnssec.dedyn.io. 0 10800 3600 604800 3600
               full_rrset_txt += `${rrset.data.mname} ${rrset.data.rname} ${rrset.data.serial} ${rrset.data.refresh} ${rrset.data.retry} ${rrset.data.expire} ${rrset.data.minimum}`
-            } else if (rrset.type == 'NSEC' || rrset.type == 'NSEC3') {
+            } else if (rrset.type == 'NSEC') {
               full_rrset_txt += `${rrset.data.nextDomain} ${rrset.data.rrtypes.join(' ')}`
+            } else if (rrset.type == 'NSEC3') {
+              // For some reason, ${base32.encode(rrset.data.nextDomain)} does not give same output as dig; eliding
+              full_rrset_txt += `${rrset.data.algorithm} ${rrset.data.flags} ${rrset.data.iterations} ${rrset.data.salt.length ? rrset.data.salt.toString('hex') : '-'} ... ${rrset.data.rrtypes.join(' ')}`
             } else {
               full_rrset_txt = rrset
             }
@@ -198,3 +256,14 @@ import {RECURSION_DESIRED} from 'dns-packet'
     },
   }
 </script>
+
+<style>
+p {
+  margin: 1em 0;
+}
+p code {
+  background: #FEE;
+  font-weight: 600;
+  padding: 2px;
+}
+</style>
