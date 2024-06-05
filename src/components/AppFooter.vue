@@ -17,12 +17,22 @@
         :size="item.icon === '$vuetify' ? 24 : 16"
       />
     </a>
+    <div
+      class="text-caption text-disabled"
+    >
+      <span class="d-none d-sm-inline">
+        Credits:
+        <a href="https://goertzen.dev/">Jason Goertzen</a> (<a href="https://www.sandboxaq.com/">Sandbox AQ</a>),
+        <a href="https://github.com/nils-wisiol/dns-falcon">Nils Wisiol</a>.
+      </span>
+      <a href="https://nlnet.nl/project/PQ-DNSSEC-Testbench/">Funded by NLnet<span class="d-none d-sm-inline"> Foundation</span>.</a>
+    </div>
 
     <div
       class="text-caption text-disabled"
       style="position: absolute; right: 16px;"
     >
-      &copy; 2022-{{ (new Date()).getFullYear() }} <span class="d-none d-sm-inline-block">deSEC e.V.</span>
+      &copy; 2022-{{ (new Date()).getFullYear() }} <span class="d-none d-sm-inline-block"><a href="https://desec.io/">deSEC e.V.</a></span>
       —
       <a
         class="text-decoration-none on-surface"

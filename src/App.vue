@@ -1,7 +1,25 @@
 <template>
   <v-app>
+        <v-app-bar
+      app
+      color="primary"
+      dark
+    >
+
+      <v-spacer></v-spacer>
+
+      <!--v-btn
+        href="https://"
+        target="_blank"
+        text
+      >
+        <span class="mr-2">Talk at ...</span>
+        <v-icon>mdi-open-in-new</v-icon>
+      </v-btn-->
+    </v-app-bar>
+
     <v-main>
-      <HelloWorld />
+      <QueryPage />
     </v-main>
 
     <AppFooter />
@@ -10,4 +28,11 @@
 
 <script setup>
   //
+import QueryPage from "@/components/QueryPage.vue";
 </script>
+
+<style>
+a {
+  color: rgb(var(--v-theme-primary));
+}
+</style>

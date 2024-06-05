@@ -19,7 +19,10 @@
         <p>
           Send queries to our post-quantum enabled validating resolver!
           You can choose from a number of post-quantum (and classical) signing schemes, NSEC or NSEC3 mode, and
-          implementations for PowerDNS or BIND.
+          implementations for PowerDNS
+          (<a href="https://github.com/desec-io/pdns" target="_blank">source <v-icon>mdi-open-in-new</v-icon></a>)
+          and BIND
+          (<a href="https://github.com/desec-io/OQS-bind" target="_blank">source <v-icon>mdi-open-in-new</v-icon></a>).
         </p>
         <p>
           Zones signed accordingly are available at <code>{algorithm}.{vendor}.pq-dnssec.dedyn.io</code>, and each has a
@@ -42,47 +45,58 @@
 
     <v-row>
       <v-col>
-        <v-row>
-          <v-combobox
-            v-model="qtype"
-            filled
-            label="Query type"
-            :items="['TXT', 'A']"
-          />
-          <v-select v-model="algorithm" label="Algorithm" :items="algorithms">
-            <template #item="{ props, item }">
-              <v-list-subheader v-if="props.header">
-                {{ props.header }}
-              </v-list-subheader>
-              <v-divider v-else-if="props.divider" class="mt-2" />
-              <v-list-item v-else v-bind="props"></v-list-item>
-            </template>
-          </v-select>
-          <v-select v-model="vendor" label="vendor" :items="vendors" item-title="name" item-value="value"/>
-        </v-row>
-        <v-row>
-          <v-checkbox
-            v-model="nsec3"
-            label="NSEC3"
-            :readonly="algorithm == 'unsigned'"
-          />
-          <v-checkbox
-            v-model="nx"
-            label="non-existent name"
-          />
-          <v-text-field
-            v-model="qname"
-            filled
-            label="Domain name"
-            readonly
-            type="text"
-            class="ml-2"
-          >
-            <template v-slot:append>
-              <v-icon :disabled="!qtype || !qname" @click="query">mdi-send</v-icon>
-            </template>
-          </v-text-field>
-        </v-row>
+        <v-form v-model="valid" @submit.prevent="query">
+          <v-row>
+            <v-combobox
+              v-model="qtype"
+              filled
+              label="Query type"
+              :rules="[v => !!v || 'You must enter a type.']"
+              :items="['A', 'TXT']"
+            />
+            <v-select v-model="algorithm" label="Algorithm" :items="algorithms">
+              <template #item="{ props, item }">
+                <v-list-subheader v-if="props.header">
+                  {{ props.header }}
+                </v-list-subheader>
+                <v-divider v-else-if="props.divider" class="mt-2" />
+                <v-list-item v-else v-bind="props"></v-list-item>
+              </template>
+            </v-select>
+            <v-select v-model="vendor" label="Authoritative vendor" :items="vendors" item-title="name" item-value="value"/>
+            <v-select v-model="vendor" label="Resolver vendor" :items="vendors" item-title="name" item-value="value"/>
+          </v-row>
+          <v-row>
+            <v-checkbox
+              v-model="nsec3"
+              label="NSEC3"
+              :readonly="algorithm == 'unsigned'"
+            />
+            <v-checkbox
+              v-model="nx"
+              label="non-existent name"
+            />
+            <v-text-field
+              v-model="qname"
+              filled
+              label="Domain name"
+              readonly
+              type="text"
+              class="ml-2"
+            >
+              <template v-slot:append>
+                <v-btn type="submit" variant="flat" class="mr-2" color="primary">
+                  <v-icon class="mr-1">mdi-send</v-icon>
+                  Query
+                </v-btn>
+                <v-btn variant="flat" :href="`https://dnsviz.net/d/${qname}/dnssec/`" target="_blank" class="text-none" color="secondary">
+                  DNSViz
+                  <v-icon class="ml-1">mdi-open-in-new</v-icon>
+                </v-btn>
+              </template>
+            </v-text-field>
+          </v-row>
+        </v-form>
         <v-row v-if="working">
           <v-col>
             <div class="text-center">
@@ -96,8 +110,8 @@
         <v-row v-if="err">
           <v-alert>{{ err }}</v-alert>
         </v-row>
-        <v-row v-if="!working && r_text.length">
-          <code style="background: lightgrey; padding: 1em; width: 100%; overflow-wrap: break-word"><span
+        <v-row ref="output">
+          <code v-if="!working && r_text.length" style="background: lightgrey; padding: 1em; width: 100%; overflow-wrap: break-word"><span
             v-for="(l, index) in r_text"
             :key="index"
           >{{ l }}<br></span></code>
@@ -110,12 +124,13 @@
 <script>
 import {sendDohMsg} from 'dohjs'
 import {RECURSION_DESIRED} from 'dns-packet'
-import base32 from 'hi-base32'
+//import base32 from 'hi-base32'
 
   export default {
-    name: 'HelloWorld',
+    name: 'QueryPage',
 
     data: () => ({
+      valid: null,
       algorithm: 'Falcon512',
       vendor: ['pdns', 'bind9'][Math.floor(Math.random() * 2)],
       nx: false,
@@ -157,7 +172,11 @@ import base32 from 'hi-base32'
     },
     methods: {
       query: function () {
+        if (!this.valid) {
+          return;
+        }
         this.working = true
+        this.r_text = []
         this.err = false
         this.q = {
             type: 'query',
@@ -180,8 +199,6 @@ import base32 from 'hi-base32'
       },
       digest: function (r) {
         this.r_text = []
-        // this.r_text.push(r)
-
         // Header:
         // ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 25078
         // ;; flags: qr rd ra; QUERY: 1, ANSWER: 2, AUTHORITY: 2, ADDITIONAL: 1
@@ -214,6 +231,9 @@ import base32 from 'hi-base32'
           this.r_text.push(...this.render_section(r.authorities))
           this.r_text.push('')
         }
+        this.$nextTick(() => {
+          this.$refs.output.$el.scrollIntoView();
+        });
       },
       render_section(s) {
         let full_section = []
@@ -258,6 +278,9 @@ import base32 from 'hi-base32'
 </script>
 
 <style>
+a {
+  text-decoration: none;
+}
 p {
   margin: 1em 0;
 }
