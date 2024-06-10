@@ -26,7 +26,7 @@
         </p>
         <p>
           Zones signed accordingly are available at <code>{algorithm}.{vendor}.pq-dnssec.dedyn.io</code>, and each has a
-          <code>A</code> and a <code>TXT</code> record configured.
+          <code>A</code> and a <code>TXT</code> record configured (apart from DNSSEC records like <code>DNSKEY</code>).
           To query a non-existing name, prepend the <code>nx</code> label (for example).
         </p>
         <p>
@@ -52,7 +52,7 @@
               filled
               label="Query type"
               :rules="[v => !!v || 'You must enter a type.']"
-              :items="['A', 'TXT']"
+              :items="['DNSKEY', 'A', 'TXT']"
             />
             <v-select v-model="algorithm" label="Algorithm" :items="algorithms">
               <template #item="{ props, item }">
@@ -263,6 +263,8 @@ import {RECURSION_DESIRED} from 'dns-packet'
             } else if (rrset.type == 'NSEC3') {
               // For some reason, ${base32.encode(rrset.data.nextDomain)} does not give same output as dig; eliding
               full_rrset_txt += `${rrset.data.algorithm} ${rrset.data.flags} ${rrset.data.iterations} ${rrset.data.salt.length ? rrset.data.salt.toString('hex') : '-'} ... ${rrset.data.rrtypes.join(' ')}`
+            } else if (rrset.type == 'DNSKEY') {
+              full_rrset_txt += `${rrset.data.flags} 3 ${rrset.data.algorithm} ${rrset.data.key.toString('base64')}`
             } else {
               full_rrset_txt = rrset
             }
