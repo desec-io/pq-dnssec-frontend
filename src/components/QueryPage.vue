@@ -193,7 +193,7 @@ import {RECURSION_DESIRED} from 'dns-packet'
               flags: 1 << 15, // DNSSEC_OK
             }]
         }
-        sendDohMsg(this.q, 'https://pdns.pq-dnssec.dedyn.io/dns-query', 'GET', [], 1500)
+        sendDohMsg(this.q, 'https://pdns.pq-dnssec.dedyn.io/dns-query', 'GET', [], 3000)
           .then(r => {this.digest(r); this.working = false;})
           .catch(err => {this.err = err; this.working = false;})
       },
