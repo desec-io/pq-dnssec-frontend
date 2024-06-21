@@ -63,8 +63,8 @@
                 <v-list-item v-else v-bind="props"></v-list-item>
               </template>
             </v-select>
-            <v-select v-model="vendor" label="Authoritative vendor" :items="vendors" item-title="name" item-value="value"/>
-            <v-select v-model="vendor" label="Resolver vendor" :items="vendors" item-title="name" item-value="value"/>
+            <v-select v-model="vendorAuth" label="Authoritative vendor" :items="vendors" item-title="name" item-value="value"/>
+            <v-select v-model="vendorRes" label="Resolver vendor" :items="vendors" item-title="name" item-value="value"/>
           </v-row>
           <v-row>
             <v-checkbox
@@ -132,7 +132,8 @@ import {RECURSION_DESIRED} from 'dns-packet'
     data: () => ({
       valid: null,
       algorithm: 'Falcon512',
-      vendor: ['pdns', 'bind9'][Math.floor(Math.random() * 2)],
+      vendorAuth: ['pdns', 'bind9'][Math.floor(Math.random() * 2)],
+      vendorRes: ['pdns', 'bind9'][Math.floor(Math.random() * 2)],
       nx: false,
       nsec3: false,
       qtype: null,
@@ -160,7 +161,7 @@ import {RECURSION_DESIRED} from 'dns-packet'
     }),
     computed: {
       qname: function () {
-        return `${this.nx ? 'nx.' : ''}${this.algorithm.toLowerCase()}${this.nsec3 ? 3 : ''}.${this.vendor}.pq-dnssec.dedyn.io`;
+        return `${this.nx ? 'nx.' : ''}${this.algorithm.toLowerCase()}${this.nsec3 ? 3 : ''}.${this.vendorAuth}.pq-dnssec.dedyn.io`;
       },
     },
     watch: {
@@ -193,7 +194,7 @@ import {RECURSION_DESIRED} from 'dns-packet'
               flags: 1 << 15, // DNSSEC_OK
             }]
         }
-        sendDohMsg(this.q, 'https://pdns.pq-dnssec.dedyn.io/dns-query', 'GET', [], 3000)
+        sendDohMsg(this.q, `https://${this.vendorRes}.pq-dnssec.dedyn.io/dns-query`, 'GET', [], 3000)
           .then(r => {this.digest(r); this.working = false;})
           .catch(err => {this.err = err; this.working = false;})
       },
