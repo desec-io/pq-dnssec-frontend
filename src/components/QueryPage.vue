@@ -118,6 +118,26 @@
         </v-row>
       </v-col>
     </v-row>
+
+    <v-row>
+      <v-col
+        class="mb-5"
+        cols="12"
+      >
+        <h2 class="headline font-weight-bold mb-3">
+          Benchmarks
+        </h2>
+        <div>
+
+        <ul class="pl-6">
+          <li>
+            <a href="/pdns_benchmark.pdf" target="_blank">PowerDNS benchmark <v-icon>mdi-open-in-new</v-icon></a>
+            for key generation, signing, and validation
+          </li>
+        </ul>
+        </div>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
