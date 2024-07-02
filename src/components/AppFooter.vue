@@ -25,7 +25,10 @@
         <a href="https://goertzen.dev/">Jason Goertzen</a> (<a href="https://www.sandboxaq.com/">Sandbox AQ</a>),
         <a href="https://github.com/nils-wisiol/dns-falcon">Nils Wisiol</a>.
       </span>
-      <a href="https://nlnet.nl/project/PQ-DNSSEC-Testbench/">Funded by NLnet<span class="d-none d-sm-inline"> Foundation</span>.</a>
+      <span class="d-none d-md-inline">
+        <a href="https://nlnet.nl/project/PQ-DNSSEC-Testbench/">Funded by NLnet<span class="d-none d-md-inline"> Foundation</span></a>,
+        <span class="d-none d-md-inline">and</span> <a href="https://www.securesystems.de/">supported by SSE<span class="d-none d-lg-inline"> – Secure Systems Engineering GmbH</span></a>
+      </span>
     </div>
 
     <div
