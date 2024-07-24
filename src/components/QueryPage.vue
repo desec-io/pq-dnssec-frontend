@@ -122,6 +122,45 @@
         cols="12"
       >
         <h2 class="headline font-weight-bold mb-3">
+          Field Study
+        </h2>
+        <p>
+          In order to investigate DNS response success and failure rates depending on the signing scheme and other
+          parameters, a RIPE ATLAS field study based on our
+          <a href="/study-concept.pdf" target="_blank">measurement and analysis concept <v-icon>mdi-open-in-new</v-icon></a>
+          was conducted with the above implementations.
+        </p>
+
+        <h3>Results</h3>
+        <p>
+          RIPE ATLAS measurements are available both
+          <a href="https://atlas.ripe.net/measurements/public?id__gt=1000000&is_public=true&sort=-id&toggle=all&page_size=100&search=pq-dnssec.dedyn.io&page=1" target="_blank">raw <v-icon>mdi-open-in-new</v-icon></a> and as a
+          <a href="/results.csv.bz2" target="_blank">pre-processed CSV file <v-icon>mdi-open-in-new</v-icon></a>.
+          We further provide the
+          <a href="/Analysis.ipynb" target="_blank">analysis notebook <v-icon>mdi-open-in-new</v-icon></a>, the outputs
+          of which are available separately
+          <a href="/results_bind9_good-rsa.pdf" target="_blank">for BIND <v-icon>mdi-open-in-new</v-icon></a> and
+          <a href="/results_pdns_good-rsa.pdf" target="_blank">for PowerDNS <v-icon>mdi-open-in-new</v-icon></a>.
+        </p>
+        <p>
+          We find that depending on circumstances, a significant fraction of clients choke. Failure rates are mainly a
+          function of response packet size, which is mediated by parameters such as DNSSEC configuration (KSK/ZSK vs.
+          CSK, NSEC vs. NSEC3, or compact DoE) and DO bit presence, with some variation depending on transport.
+          This is qualitatively in line with the "educated guess", but adds quantitative detail.
+        </p>
+        <p>
+          We also find surprising results, such as that a number of resolvers claim to have validated PQC signatures,
+          even though it is implausible for resolvers to support these algorithms.
+        </p>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col
+        class="mb-5"
+        cols="12"
+      >
+        <h2 class="headline font-weight-bold mb-3">
           Benchmarks
         </h2>
         <p>
@@ -142,7 +181,8 @@
           Results show overall agreement and demonstrate PQC algorithms performing en par with classical algorithms,
           with the exception of XMSS which has prohibitively large key generation time.
         </p>
-        <p><b>Limitations:</b></p>
+
+        <h3>Limitations:</h3>
         <ul class="pl-6">
           <li>
             BIND key generation is bounded from below because individual passes were necessary, causing around 8ms
