@@ -19,10 +19,7 @@
         <p>
           Send queries to our post-quantum enabled validating resolver!
           You can choose from a number of post-quantum (and classical) signing schemes, NSEC or NSEC3 mode, and
-          implementations for PowerDNS
-          (<a href="https://github.com/desec-io/pdns" target="_blank">source <v-icon>mdi-open-in-new</v-icon></a>)
-          and BIND
-          (<a href="https://github.com/desec-io/OQS-bind" target="_blank">source <v-icon>mdi-open-in-new</v-icon></a>).
+          implementations for PowerDNS and BIND (source links above).
         </p>
         <p>
           Zones signed accordingly are available at <code>{algorithm}.{vendor}.pq-dnssec.dedyn.io</code>, and each has a

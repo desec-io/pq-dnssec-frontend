@@ -9,11 +9,20 @@
       <v-spacer></v-spacer>
 
       <v-btn
-          href="https://static.sched.com/hosted_files/icann80/11/2.6%20Peter%20Thomassen%202024-06-10%20ICANN%2080%2C%20Field%20Experiments%20on%20Post-Quantum%20DNSSEC.pdf"
+          href="https://github.com/desec-io/pdns"
           target="_blank"
           text
       >
-        <span class="mr-2">Preliminary Results at ICANN 80</span>
+        <span class="mr-2">PowerDNS source</span>
+        <v-icon>mdi-open-in-new</v-icon>
+      </v-btn>
+
+      <v-btn
+          href="https://github.com/desec-io/OQS-bind"
+          target="_blank"
+          text
+      >
+        <span class="mr-2">BIND source</span>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
 
