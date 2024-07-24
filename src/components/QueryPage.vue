@@ -8,7 +8,7 @@
       </v-col>
     </v-row>
 
-    <v-row>
+    <v-row id="intro">
       <v-col
         class="mb-5"
         cols="12"
@@ -127,15 +127,37 @@
         <h2 class="headline font-weight-bold mb-3">
           Benchmarks
         </h2>
-        <div>
-
+        <p>
+          Each benchmark has 10,000 runs for key generation, signing, and validation.
+        </p>
         <ul class="pl-6">
           <li>
-            <a href="/pdns_benchmark.pdf" target="_blank">PowerDNS benchmark <v-icon>mdi-open-in-new</v-icon></a>
-            for key generation, signing, and validation
+            <a href="/benchmark_pdns.pdf" target="_blank">PowerDNS benchmark <v-icon>mdi-open-in-new</v-icon></a> using
+            100 runs of the on-board <code>pdnsutil</code> tool (runs 100 iterations each)
+          </li>
+          <li>
+            <a href="/benchmark_bind9.pdf" target="_blank">BIND9 benchmark <v-icon>mdi-open-in-new</v-icon></a> using
+            10,000 runs of <code>dnssec-keygen</code>, and single runs of <code>dnssec-signzone</code> on a suitable
+            sized test zone
           </li>
         </ul>
-        </div>
+        <p>
+          Results show overall agreement and demonstrate PQC algorithms performing en par with classical algorithms,
+          with the exception of XMSS which has prohibitively large key generation time.
+        </p>
+        <p><b>Limitations:</b></p>
+        <ul class="pl-6">
+          <li>
+            BIND key generation is bounded from below because individual passes were necessary, causing around 8ms
+            overhead per invocation. For EC and Dilithium2, overhead and actual key generation take comparably long,
+            leaving room for efficiency improvements in <code>dnssec-keygen</code>.
+          </li>
+          <li>
+            Measurements were conducted on VMs with unknown neighbor noise and slightly different configuration. While
+            absolute numbers vary up to a factor of 2, shape is preserved.
+          </li>
+        </ul>
+        <p>The above key takeaway nevertheless can be extracted.</p>
       </v-col>
     </v-row>
   </v-container>
@@ -307,7 +329,7 @@ a {
 p {
   margin: 1em 0;
 }
-p code {
+#intro code {
   background: #FEE;
   font-weight: 600;
   padding: 2px;
