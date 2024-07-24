@@ -160,6 +160,43 @@
         <p>The above key takeaway nevertheless can be extracted.</p>
       </v-col>
     </v-row>
+
+    <v-row>
+      <v-col
+        class="mb-5"
+        cols="12"
+      >
+        <h2 class="headline font-weight-bold mb-3">
+          Publications
+        </h2>
+        <ul class="pl-6">
+          <li>
+            2024-07-24 <a href="https://datatracker.ietf.org/doc/slides-120-maprg-field-experiments-on-post-quantum-dnssec/" target="_blank">Final Results at IETF MAPRG <v-icon>mdi-open-in-new</v-icon></a>
+            (Vancouver)
+          </li>
+          <li>
+            2024-07-21 <a href="https://iepg.org/2024-07-21-ietf120/slides-120-iepg-sessa-field-experiments-on-post-quantum-dnssec-00.pdf" target="_blank">Final Results at IEPG July 2024 <v-icon>mdi-open-in-new</v-icon></a>
+            (Vancouver)
+          </li>
+          <li>
+            2024-07-16 <a href="https://www.isc.org/blogs/2024-pqc-study/" target="_blank">BIND &amp; liboqs: A PQC DNSSEC Field Study <v-icon>mdi-open-in-new</v-icon></a>
+            (ISC/BIND blog)
+          </li>
+          <li>
+            2024-07-15 <a href="https://blog.powerdns.com/2024/07/15/more-pqc-in-powerdns-a-dnssec-field-study" target="_blank">More PQC in PowerDNS: A DNSSEC Field Study <v-icon>mdi-open-in-new</v-icon></a>
+            (PowerDNS blog)
+          </li>
+          <li>
+            2024-07-11 <a href="https://blog.apnic.net/2024/07/11/podcast-testing-post-quantum-cryptography-dnssec/" target="_blank">Testing Post Quantum Cryptography DNSSEC <v-icon>mdi-open-in-new</v-icon></a>
+            (PING Podcast)
+          </li>
+          <li>
+            2024-06-10 <a href="https://static.sched.com/hosted_files/icann80/11/2.6%20Peter%20Thomassen%202024-06-10%20ICANN%2080%2C%20Field%20Experiments%20on%20Post-Quantum%20DNSSEC.pdf" target="_blank">Preliminary Results at ICANN 80 <v-icon>mdi-open-in-new</v-icon></a>
+            (Kigali), BIND9 only
+          </li>
+        </ul>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
