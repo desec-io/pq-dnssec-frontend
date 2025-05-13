@@ -108,7 +108,10 @@
           <v-alert>{{ err }}</v-alert>
         </v-row>
         <v-row ref="output">
-          <code v-if="!working && r_text.length" style="background: lightgrey; padding: 1em; width: 100%; overflow-wrap: break-word"><span
+          <code class="shell" style="background: #E3E3E3; font-weight: bold; padding: 1em 1em 0.5em; width: 100%; overflow-wrap: break-word">
+            dig <i style="opacity: 0.5">-p {{ port }}</i> <span style="color: #00809C">@{{ vendorRes }}.pq-dnssec.dedyn.io</span> <span style="color: #008C70">{{ qname }}</span> {{qtype}}
+          </code>
+          <code v-if="!working && r_text.length" style="background: #D3D3D3; border-top: 1px solid #7F7F7F; padding: 0.5em 1em 1em; width: 100%; overflow-wrap: break-word"><span
             v-for="(l, index) in r_text"
             :key="index"
           >{{ l }}<br></span></code>
@@ -279,6 +282,9 @@ import {RECURSION_DESIRED} from 'dns-packet'
       qname: function () {
         return `${this.nx ? 'nx.' : ''}${this.algorithm.toLowerCase()}${this.nsec3 ? 3 : ''}.${this.vendorAuth}.pq-dnssec.dedyn.io`;
       },
+      port: function () {
+        return this.vendorRes == 'bind9' ? 5304 : 5302;
+      },
     },
     watch: {
       algorithm: function (algo) {
@@ -407,5 +413,9 @@ p {
   background: #FEE;
   font-weight: 600;
   padding: 2px;
+}
+.shell::before {
+  content: '$ ';
+  font-weight: normal;
 }
 </style>
