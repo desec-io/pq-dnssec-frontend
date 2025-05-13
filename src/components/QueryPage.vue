@@ -42,7 +42,7 @@
 
     <v-row>
       <v-col>
-        <v-form v-model="valid" @submit.prevent="query">
+        <v-form ref="form" v-model="valid" @submit.prevent="query">
           <v-row>
             <v-combobox
               v-model="qtype"
@@ -107,7 +107,7 @@
         <v-row v-if="err">
           <v-alert>{{ err }}</v-alert>
         </v-row>
-        <v-row ref="output">
+        <v-row>
           <code class="shell" style="background: #E3E3E3; font-weight: bold; padding: 1em 1em 0.5em; width: 100%; overflow-wrap: break-word">
             dig <i style="opacity: 0.5">-p {{ port }}</i> <span style="color: #00809C">@{{ vendorRes }}.pq-dnssec.dedyn.io</span> <span style="color: #008C70">{{ qname }}</span> {{qtype}}
           </code>
@@ -355,7 +355,7 @@ import {RECURSION_DESIRED} from 'dns-packet'
           this.r_text.push('')
         }
         this.$nextTick(() => {
-          this.$refs.output.$el.scrollIntoView();
+          this.$refs.form.$el.scrollIntoView({ behavior: "smooth"});
         });
       },
       render_section(s) {
